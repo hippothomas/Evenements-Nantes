@@ -8,21 +8,25 @@
 	<div id="main" v-cloak>
 		<h1>Événements sur Nantes</h1>
 
-		<div class="bar">
-			<a class="list-icon" v-bind:class="{ 'active': layout == 'list'}" v-on:click="layout = 'list'"></a>
-			<a class="grid-icon" v-bind:class="{ 'active': layout == 'grid'}" v-on:click="layout = 'grid'"></a>
+		<div class="bar flex-between">
+			<input type="text" class="search" v-model="searchString" placeholder="Recherche...." />
+
+			<div>
+				<a class="list-icon" v-bind:class="{ 'active': layout == 'list'}" v-on:click="layout = 'list'"></a>
+				<a class="grid-icon" v-bind:class="{ 'active': layout == 'grid'}" v-on:click="layout = 'grid'"></a>		
+			</div>
 		</div>
 
 		<ul v-if="layout == 'grid'" class="grid">
 			<!-- A view with big photos and no text -->
-			<li v-for="event in event_list">
+			<li v-for="event in filteredArticles">
 				<a v-bind:href="event.fields.lien_agenda" target="_blank"><img v-bind:src="event.fields.media_1" /></a>
 			</li>
 		</ul>
 
 		<ul v-if="layout == 'list'" class="list">
 			<!-- A compact view smaller photos and titles -->
-			<li v-for="event in event_list">
+			<li v-for="event in filteredArticles">
 				<a v-bind:href="event.fields.lien_agenda" target="_blank"><img v-bind:src="event.fields.media_1" /></a>
 				<div class="title">{{ (event.fields.nom).substring(0, 150) }}</div>
 				<p>
@@ -44,7 +48,8 @@
 
 		  data: {
 		  	layout: 'list',
-		  	event_list: ""         
+		  	event_list: "",
+        	searchString: ""
 		  },
 
 		  created: function () {
@@ -84,7 +89,29 @@
 				    // always executed
 				  });
 		  	}
-		  }
+		  },
+
+		  computed: {
+	        filteredArticles: function () {
+	            var events_array = this.event_list,
+	                searchString = this.searchString;
+
+	            if(!searchString){
+	                return events_array;
+	            }
+
+	            searchString = searchString.trim().toLowerCase();
+
+	            events_array = events_array.filter(function(item){
+	                if(item.fields.nom.toLowerCase().indexOf(searchString) !== -1){
+	                    return item;
+	                }
+	            })
+
+	            // Return an array with the filtered data.
+	            return events_array;
+	        }
+	    }
 		})
   	</script>
 </body>
