@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Événements sur Nantes</title>
+	<link rel="stylesheet" type="text/css" href="./style.css" />
+</head>
+<body>
+	<div id="main" v-cloak>
+		<h1>Événements sur Nantes</h1>
+
+		<div class="bar">
+			<a class="list-icon" v-bind:class="{ 'active': layout == 'list'}" v-on:click="layout = 'list'"></a>
+			<a class="grid-icon" v-bind:class="{ 'active': layout == 'grid'}" v-on:click="layout = 'grid'"></a>
+		</div>
+
+		<ul v-if="layout == 'grid'" class="grid">
+			<!-- A view with big photos and no text -->
+			<li v-for="event in event_list">
+				<a v-bind:href="event.fields.lien_agenda" target="_blank"><img v-bind:src="event.fields.media_1" /></a>
+			</li>
+		</ul>
+
+		<ul v-if="layout == 'list'" class="list">
+			<!-- A compact view smaller photos and titles -->
+			<li v-for="event in event_list">
+				<a v-bind:href="event.fields.lien_agenda" target="_blank"><img v-bind:src="event.fields.media_1" /></a>
+				<p>{{ (event.fields.description).substring(0, 150) }}...</p>
+			</li>
+		</ul>
+	</div>
+  	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  	  	<script>
+  		var apiURL = 'https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_agenda-evenements-nantes-nantes-metropole&facet=emetteur&facet=rubrique&facet=lieu&facet=ville'
+
+		var main = new Vue({
+
+		  el: '#main',
+
+		  data: {
+		  	layout: 'grid',
+		  	event_list: ""         
+		  },
+
+		  created: function () {
+		    this.fetchData()
+		  },
+
+		  filters: {
+		    truncate: function (v) {
+		      var newline = v.indexOf('\n')
+		      return newline > 0 ? v.slice(0, newline) : v
+		    },
+		    formatDate: function (v) {
+		      return v.replace(/T|Z/g, ' ')
+		    }
+		  },
+
+		  methods: {
+		  	fetchData: function () {
+		  		// Make a request for a user with a given ID
+		      	var self = this
+				axios({
+				  method: 'get',
+				  url: apiURL,
+				  responseType: 'json'
+				})
+				  .then(function (response) {
+				  	self.event_list = response.data.records;
+				  	console.log (response.records)
+
+				    // handle success
+				  })
+				  .catch(function (error) {
+				    // handle error
+				    console.log(error);
+				  })
+				  .finally(function () {
+				    // always executed
+				  });
+		  	}
+		  }
+		})
+  	</script>
+</body>
+</html>
