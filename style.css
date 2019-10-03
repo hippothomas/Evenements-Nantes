@@ -120,10 +120,14 @@ ul.list li img{
     object-fit: cover;
 }
 
-ul.list li p{
+ul.list li .title {
 	margin-left: 135px;
 	font-weight: bold;
 	color:#6e7a7f;
+}
+ul.list li p {
+    margin-left: 135px;
+    color:#6e7a7f;
 }
 
 /*-------------------------

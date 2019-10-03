@@ -24,21 +24,26 @@
 			<!-- A compact view smaller photos and titles -->
 			<li v-for="event in event_list">
 				<a v-bind:href="event.fields.lien_agenda" target="_blank"><img v-bind:src="event.fields.media_1" /></a>
-				<p>{{ (event.fields.description).substring(0, 150) }}...</p>
+				<div class="title">{{ (event.fields.nom).substring(0, 150) }}</div>
+				<p>
+					Lieu : {{ event.fields.lieu }}<br/>
+					Ville : {{ event.fields.ville }}<br/>
+					Site : <a v-bind:href="event.fields.lieu_siteweb" target="_blank">{{ event.fields.lieu_siteweb }}</a>
+				</p>
 			</li>
 		</ul>
 	</div>
   	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   	  	<script>
-  		var apiURL = 'https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_agenda-evenements-nantes-nantes-metropole&facet=emetteur&facet=rubrique&facet=lieu&facet=ville'
+  		var apiURL = 'https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_agenda-evenements-nantes-nantes-metropole&q=spectacle&facet=emetteur&facet=rubrique&facet=lieu&facet=ville'
 
 		var main = new Vue({
 
 		  el: '#main',
 
 		  data: {
-		  	layout: 'grid',
+		  	layout: 'list',
 		  	event_list: ""         
 		  },
 
